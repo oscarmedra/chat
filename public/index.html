@@ -1,0 +1,189 @@
+
+
+<!doctype html>
+<html lang="en">
+
+    <head>
+
+        <meta charset="utf-8" />
+        <title>Chat | Skote - Admin & Dashboard Template</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
+        <meta content="Themesbrand" name="author" />
+        <!-- App favicon -->
+        <link rel="shortcut icon" href="assets/images/favicon.ico">
+
+        <!-- Bootstrap Css -->
+        <link href="assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
+        <!-- Icons Css -->
+        <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+        <!-- App Css-->
+        <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
+
+    </head>
+
+    <body style='width : 100vw; height : 100vh;'>
+
+        <div class="container mx-auto d-flex overflow-hidden" style=''>
+            <div class="w-100 user-chat">
+                <div class="card">
+                    <div class="p-4 border-bottom ">
+                        <div class="row">
+                            <div class="col-md-4 col-9">
+                                <h5 class="font-size-15 mb-1" id="user-id"></h5>
+                                <p class="text-muted mb-0"><i class="mdi mdi-circle text-success align-middle me-1"></i> Active now</p>
+                            </div>
+                            <div class="col-md-8 col-3">
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div>
+                        <div class="chat-conversation p-3">
+                            <ul class="list-unstyled mb-0" id="" data-simplebar style="height: 400px;">
+                                
+                            </ul>
+                        </div>
+                        <div class="p-3 chat-input-section">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="position-relative">
+                                        <input type="text" id="text-input" class="form-control chat-input" placeholder="Enter Message...">
+                                        <div class="chat-input-links" id="tooltip-container">
+                                            <ul class="list-inline mb-0">
+                                                <li class="list-inline-item"><a href="javascript: void(0);" title="Emoji"><i class="mdi mdi-emoticon-happy-outline"></i></a></li>
+                                                <li class="list-inline-item"><a href="javascript: void(0);" title="Images"><i class="mdi mdi-file-image-outline"></i></a></li>
+                                                <li class="list-inline-item"><a href="javascript: void(0);" title="Add Files"><i class="mdi mdi-file-document-outline"></i></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <button type="submit" disabled id="send-message" class="btn btn-primary btn-rounded chat-send w-md waves-effect waves-light"><span class="d-none d-sm-inline-block me-2">Send</span> <i class="mdi mdi-send"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <template id="default-template">
+            <li class="left">
+                <div class="conversation-list">
+                    <div class="dropdown">
+
+                        <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="bx bx-dots-vertical-rounded"></i>
+                          </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#">Copy</a>
+                            <a class="dropdown-item" href="#">Save</a>
+                            <a class="dropdown-item" href="#">Forward</a>
+                            <a class="dropdown-item" href="#">Delete</a>
+                        </div>
+                    </div>
+                    <div class="ctext-wrap">
+                        <div class="conversation-name" id="sender_id"></div>
+                        <p id="message">
+                            Hi, How are you? What about our next meeting?
+                        </p>
+
+                        <p class="chat-time mb-0"><i class="bx bx-time-five align-middle me-1"></i> 10:02</p>
+                    </div>
+                </div>
+            </li>
+        </template>
+
+        <template id="right-template">
+            <li class="right">
+                <div class="conversation-list">
+                    <div class="dropdown">
+
+                        <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="bx bx-dots-vertical-rounded"></i>
+                          </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#">Copy</a>
+                            <a class="dropdown-item" href="#">Save</a>
+                            <a class="dropdown-item" href="#">Forward</a>
+                            <a class="dropdown-item" href="#">Delete</a>
+                        </div>
+                    </div>
+                    <div class="ctext-wrap">
+                        <div class="conversation-name" id="current_user_id"></div>
+                        <p id="message">
+                            Wow that's great
+                        </p>
+
+                        <p class="chat-time mb-0"><i class="bx bx-time-five align-middle me-1"></i> 10:07</p>
+                    </div>
+                </div>
+            </li>
+        </template>
+
+        <!-- JAVASCRIPT -->
+        <script src="assets/libs/jquery/jquery.min.js"></script>
+        <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="assets/libs/metismenu/metisMenu.min.js"></script>
+        <script src="assets/libs/simplebar/simplebar.min.js"></script>
+        <script src="assets/libs/node-waves/waves.min.js"></script>
+
+        <script src="assets/js/app.js"></script>
+
+
+        <script type="module">
+            import { io } from "https://cdn.socket.io/4.3.2/socket.io.esm.min.js";
+            const socket = io.connect('http://localhost:3000');
+            const contentWrapper = document.querySelector('#content-wrapper');
+            let userId = null;
+            socket.on('connect', function(){
+                console.log('vous etes bien connecté');
+            })
+
+            socket.on('user-id', function(data){
+                userId = data;
+                $('#user-id').append(data);
+            })
+
+            $('#text-input').on('keyup', function(){
+                if($(this).val() != ''){
+                    $('#send-message').attr('disabled', null)
+                }else{
+                    $('#send-message').attr('disabled', '');
+
+                }
+            })
+
+            $('#send-message').on('click', function(){
+                socket.emit($('#text-input').val());
+                const template = document.querySelector('#right-template');
+                const clone = document.importNode(template.content, true);
+                const element = clone.querySelector('.right');
+                element.querySelector('p#message').innerHTML = $('#text-input').val();
+                element.querySelector('#current_user_id').append(userId);
+                $('.simplebar-content').append($(element));
+                socket.emit('chat-message', {userId : userId, message : $('#text-input').val()});
+                $('#text-input').val('');
+            })
+            
+    
+            socket.on('broadcast', function(data){
+ 
+                if(data.userId != userId){
+                    const template = document.querySelector('#default-template');
+                    const clone = document.importNode(template.content, true);
+                    const element = clone.querySelector('.left');
+                    element.querySelector('#sender_id').innerHTML = data.userId;
+                    element.querySelector('p#message').innerHTML = data.message; 
+                    $('.simplebar-content').append($(element));
+                }
+            })
+    
+        </script>
+
+    </body>
+</html>
